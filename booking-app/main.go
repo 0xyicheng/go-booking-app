@@ -30,17 +30,17 @@ func main() {
 		fmt.Println(("Enter your last name: "))
 		fmt.Scan(&lastName)
 
+		fmt.Println(("Enter your email: "))
+		fmt.Scan(&email)
+
 		fmt.Println(("Enter number of tickets: "))
 		fmt.Scan(&userTickets)
 
-		if userTickets <= remainingTickets {
-			fmt.Println(("Enter your email: "))
-			fmt.Scan(&email)
+		var isValidName bool = len(firstName) >= 2 && len(lastName) >= 2
+		var isValidEmail bool = strings.Contains(email, "@")
+		var isValidTicket bool = userTickets > 0 && userTickets <= remainingTickets
 
-			// fmt.Printf("The whole slice: %v\n", bookings)
-			// fmt.Printf("The first value: %v\n", bookings[0])
-			// fmt.Printf("The type of slice %T\n", bookings)
-			// fmt.Printf("The lenth of slice %v\n", len(bookings))
+		if isValidName && isValidEmail && isValidTicket {
 
 			remainingTickets = remainingTickets - userTickets
 			bookings = append(bookings, firstName+" "+lastName)
@@ -57,13 +57,19 @@ func main() {
 
 			var noTickets bool = remainingTickets == 0
 			if noTickets {
-				fmt.Println("Booked out. Come back next year.")
+				fmt.Println("Booked out. Come back next year.  ")
 				break
 			}
 		} else {
-			fmt.Printf("Sorry,Remaining Tickets are only %v, so you can't book %v tickets\n", remainingTickets, userTickets)
-			continue
-
+			if !isValidName {
+				fmt.Printf("name you entered is too short\n")
+			}
+			if !isValidEmail {
+				fmt.Printf("email you entered is not right\n")
+			}
+			if !isValidTicket {
+				fmt.Printf("number of tickets you entered is invalid\n")
+			}
 		}
 	}
 
