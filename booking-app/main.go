@@ -1,15 +1,14 @@
 package main
 
 import (
-	"booking-app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const conferenceTickets = 50 //不变的变量
 var conferenceName = "Go Conference"
 var remainingTickets uint = 50
-var bookings = []string{}
+var bookings = make([]map[string]string, 0)
 
 func main() {
 
@@ -17,11 +16,10 @@ func main() {
 
 	for {
 		firstName, lastName, email, userTickets := getUserInput()
-		isValidName, isValidEmail, isValidTicket := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets) //Func
+		isValidName, isValidEmail, isValidTicket := ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets) //Func
 
 		if isValidName && isValidEmail && isValidTicket {
-			bookTicket(userTickets, bookings, firstName, lastName, email) //Func
-			bookings = append(bookings, firstName+" "+lastName)
+			bookTicket(userTickets, firstName, lastName, email) //Func
 
 			firstNames := getFirstNames() //Func
 			fmt.Printf("The first names of bookings are: %v \n", firstNames)
@@ -53,8 +51,7 @@ func greetUsers() {
 func getFirstNames() []string {
 	firstNames := []string{}
 	for _, booking := range bookings {
-		names := strings.Fields(booking) //strings.Field() 可以根据空格进行分片
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	return firstNames
 }
@@ -80,8 +77,18 @@ func getUserInput() (string, string, string, uint) {
 	return firstName, lastName, email, userTickets
 }
 
-func bookTicket(userTickets uint, bookings []string, firstName string, lastName string, email string) {
+func bookTicket(userTickets uint, firstName string, lastName string, email string) {
 	remainingTickets = remainingTickets - userTickets
+
+	// creat a map of a user
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["memberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10) //十进制
+
+	bookings = append(bookings, userData)
+	fmt.Printf("%v\n", bookings)
 
 	fmt.Printf("Thank you %v %v for booking %v tickets, you will receive a confirmation email at %v \n", firstName, lastName, userTickets, email)
 	fmt.Printf("%v tickets remaining for %v \n", remainingTickets, conferenceName)
